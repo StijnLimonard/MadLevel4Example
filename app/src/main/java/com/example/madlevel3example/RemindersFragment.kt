@@ -19,6 +19,10 @@ import kotlinx.android.synthetic.main.fragment_reminders.*
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
 class RemindersFragment : Fragment() {
+
+
+    private lateinit var reminderRepository: ReminderRepository
+
     private  val reminders = arrayListOf<Reminder>()
     private  val reminderAdapter = ReminderAdapter(reminders)
 
@@ -35,7 +39,8 @@ class RemindersFragment : Fragment() {
 
         initViews()
         observeAddReminderResult()
-
+        reminderRepository = ReminderRepository(requireContext())
+        getRemindersFromDatabase()
     }
 
     private fun initViews() {
@@ -45,6 +50,14 @@ class RemindersFragment : Fragment() {
         rvReminders.adapter = reminderAdapter
         rvReminders.addItemDecoration(DividerItemDecoration(context,DividerItemDecoration.VERTICAL))
         createItemTouchHelper().attachToRecyclerView(rvReminders)
+    }
+
+
+    private fun getRemindersFromDatabase(){
+        val reminders = reminderRepository.getAllReminders()
+        this@RemindersFragment.reminders.clear()
+        this@RemindersFragment.reminders.addAll(reminders)
+        reminderAdapter.notifyDataSetChanged()
     }
 
 
