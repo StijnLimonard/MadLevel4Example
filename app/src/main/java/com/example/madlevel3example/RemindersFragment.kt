@@ -66,8 +66,11 @@ class RemindersFragment : Fragment() {
             bundle.getString(BUNDLE_REMINDER_KEY)?.let {
                 val reminder = Reminder(it)
 
-                reminders.add(reminder)
-                reminderAdapter.notifyDataSetChanged()
+//                reminders.add(reminder)
+//                reminderAdapter.notifyDataSetChanged()
+                reminderRepository.insertReminder(reminder)
+                getRemindersFromDatabase()
+                
             } ?: Log.e("ReminderFragment", "Request triggered, but empty reminder text!")
 
         }
@@ -93,6 +96,10 @@ class RemindersFragment : Fragment() {
                 val position = viewHolder.adapterPosition
                 reminders.removeAt(position)
                 reminderAdapter.notifyDataSetChanged()
+
+                val reminderToDelete = reminders[position]
+                reminderRepository.deleteReminder(reminderToDelete)
+                getRemindersFromDatabase()
             }
         }
         return ItemTouchHelper(callback)
